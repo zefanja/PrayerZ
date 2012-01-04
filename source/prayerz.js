@@ -1,0 +1,1 @@
+enyo.kind({  name: "PrayerZ.main",  kind: enyo.VFlexBox,  components: [      ],  create: function () {    this.inherited(arguments);    tools.createDB();  }});

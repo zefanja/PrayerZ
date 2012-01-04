@@ -1,0 +1,91 @@
+/* Losungen CSS */
+
+#losungen {
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.49, rgb(64,82,112)),
+        color-stop(0.75, rgb(90,115,146)),
+        color-stop(0.88, rgb(117,150,176))
+    );
+}
+
+.losung-caption {
+    padding: 1em;
+    font-weight: bold;
+}
+
+.losung-text {
+    padding: 0em 1em;
+    text-align: justify;
+}
+
+.losung-info {
+    padding-top: 1em;
+    text-align: center;
+    font-size: 0.6em;
+    color: lightgrey;
+}
+
+.losung-info a {
+    color: lightgrey;
+}
+
+.losung-stelle {
+    text-align: right;
+    padding: 0em 1em;
+    font-style: italic;
+    font-size: 0.8em;
+}
+
+.losungen-header {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.losungen-container {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 13%;
+    width: 60%;
+    padding: 2em 2em 1em 2em;
+    border: 3px solid;
+    color: white;
+    -webkit-border-radius: 10px;
+}
+
+.losungen-icons {
+    max-height: 32px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.popup-title {
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.popup-info {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    font-size: 0.8em;
+    text-align: center;   
+}
+
+.popup-warning {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    font-size: 0.8em;
+    text-align: center;
+    color: red;
+}
+
+.popup-version {
+    margin-top: .5em;
+    margin-bottom: 1em;
+    font-size: 0.7em;
+    text-align: center;
+    
+}
