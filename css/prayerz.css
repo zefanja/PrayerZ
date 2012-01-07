@@ -18,3 +18,14 @@
     color: rgb(31, 117,191);
     text-transform: uppercase;
 }
+
+.add-container {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.info {
+    padding: 10px;
+    font-size: smaller;
+}

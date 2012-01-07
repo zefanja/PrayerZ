@@ -25,7 +25,7 @@ var tools = {
     
     dbCreateTables: function(oldVersion, newVersion) {
         try {
-            var sql = "CREATE TABLE IF NOT EXISTS prayers (parent INTEGER, title TEXT, description TEXT, answer TEXT, study TEXT, tags TEXT, time INTEGER);";
+            var sql = "CREATE TABLE IF NOT EXISTS prayers (id INTEGER PRIMARY KEY AUTOINCREMENT, parent INTEGER, title TEXT, description TEXT, answer TEXT, study TEXT, tags TEXT, time INTEGER);";
             this.db.changeVersion(oldVersion, newVersion,
                 enyo.bind(this,(function (transaction) {
                     transaction.executeSql(sql, [],
@@ -40,7 +40,7 @@ var tools = {
     },
 
     addPrayer: function (title, description, tags, inCallback) {
-        enyo.log(title, description, tags);
+        //enyo.log(title, description, tags);
         var sec = new Date().getTime();
         try {
             var sql = "INSERT INTO prayers (parent, title, description, answer, study, tags, time) VALUES (?,?,?,?,?,?,?)";
@@ -59,18 +59,98 @@ var tools = {
         }
     },
 
+    updatePrayer: function (title, description, tags, id, inCallback) {
+        //enyo.log(title, description, tags);
+        try {
+            //var sql = "INSERT INTO prayers (parent, title, description, answer, study, tags, time) VALUES (?,?,?,?,?,?,?)";
+            var sql = 'UPDATE prayers SET title = "' + title + '", description = "' + description + '", tags = "' + tags + '" WHERE id = "' + id + '"';
+            this.db.transaction(
+                enyo.bind(this,(function (transaction) {
+                    transaction.executeSql(sql, [],
+                    enyo.bind(this, function () {
+                        enyo.log("Successfully updated prayer!");
+                        inCallback();
+                    }),
+                    enyo.bind(this,this.errorHandler));
+                }))
+            );
+        } catch (e) {
+            enyo.log("ERROR", e);
+        }
+    },
+
+    deletePrayer: function (id, inCallback) {
+        //enyo.log(title, description, tags);
+        try {
+            //var sql = "INSERT INTO prayers (parent, title, description, answer, study, tags, time) VALUES (?,?,?,?,?,?,?)";
+            var sql = 'DELETE FROM prayers WHERE id = "' + id + '"';
+            this.db.transaction(
+                enyo.bind(this,(function (transaction) {
+                    transaction.executeSql(sql, [],
+                    enyo.bind(this, function () {
+                        enyo.log("Successfully deleted prayer!");
+                        inCallback();
+                    }),
+                    enyo.bind(this,this.errorHandler));
+                }))
+            );
+        } catch (e) {
+            enyo.log("ERROR", e);
+        }
+    },
+
     getPrayers: function (inCallback) {
         var prayers = [];
         try {
-            var sql = "SELECT * FROM prayers";
+            var sql = "SELECT * FROM prayers ORDER BY title, tags ASC";
             this.db.transaction(
                 enyo.bind(this,(function (transaction) {
                     transaction.executeSql(sql, [],
                     enyo.bind(this, function (transaction, results) {
                         for (var j=0; j<results.rows.length; j++) {
-                            prayers.push({"title": results.rows.item(j).title, "description": results.rows.item(j).description, "tags": results.rows.item(j).tags});
+                            prayers.push({"id": results.rows.item(j).id, "title": results.rows.item(j).title, "description": results.rows.item(j).description, "tags": results.rows.item(j).tags});
                         }
                         inCallback(prayers);
+                    }),
+                    enyo.bind(this,this.errorHandler));
+                }))
+            );
+        } catch (e) {
+            enyo.log("ERROR", e);
+        }
+    },
+
+    getTags: function (inCallback) {
+        var tags = [];
+        var tmp = "";
+        var tmpTags = [];
+        var split = [];
+        var exp = null;
+        try {
+            var sql = "SELECT tags FROM prayers ORDER BY tags ASC";
+            this.db.transaction(
+                enyo.bind(this,(function (transaction) {
+                    transaction.executeSql(sql, [],
+                    enyo.bind(this, function (transaction, results) {
+                        for (var j=0; j<results.rows.length; j++) {
+                            if (results.rows.item(j).tags.split(",").length > 1) {
+                                split = results.rows.item(j).tags.split(",");
+                                for (var k=0; k<split.length; k++) {
+                                    tmpTags.push(split[k].replace(/^\s/, ""));
+                                }
+                            } else {
+                                tmpTags.push(results.rows.item(j).tags.replace(/^\s/, ""));
+                            }
+                        }
+                        tmpTags = tmpTags.sort();
+                        for (var i=0;i<tmpTags.length; i++) {
+                            if (i !== 0 && tmpTags[i] !== tmpTags[i-1]) {
+                                tags.push(tmpTags[i]);
+                            } else if (i === 0) {
+                                tags.push(tmpTags[i]);
+                            }
+                        }
+                        inCallback(tags);
                     }),
                     enyo.bind(this,this.errorHandler));
                 }))
