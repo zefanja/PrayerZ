@@ -99,8 +99,15 @@ var tools = {
         }
     },
 
-    getPrayers: function (inCallback) {
+    getPrayers: function (day, inCallback) {
         var prayers = [];
+        var split = [];
+        var tags = [];
+        var exp = null;
+        var tmp = "";
+        if (enyo.application.prefs.tags)
+            tags = enyo.json.parse(enyo.application.prefs.tags);
+
         try {
             var sql = "SELECT * FROM prayers ORDER BY title, tags ASC";
             this.db.transaction(
@@ -108,7 +115,23 @@ var tools = {
                     transaction.executeSql(sql, [],
                     enyo.bind(this, function (transaction, results) {
                         for (var j=0; j<results.rows.length; j++) {
-                            prayers.push({"id": results.rows.item(j).id, "title": results.rows.item(j).title, "description": results.rows.item(j).description, "tags": results.rows.item(j).tags});
+                            if (day !== "all") {
+                                if (tags[day] !== "") {
+                                    split = tags[day].split(",");
+                                    tmp = "";
+                                    for (var k=0; k<split.length; k++) {
+                                        if (k !== 0)
+                                            tmp += "|\\b" + split[k].replace(/^\s/, "") + "\\b";
+                                        else
+                                            tmp += "\\b" + split[k].replace(/^\s/, "") + "\\b";
+                                    }
+                                    exp = new RegExp(tmp);
+                                    if (results.rows.item(j).tags.search(exp) != -1)
+                                        prayers.push({"id": results.rows.item(j).id, "title": results.rows.item(j).title, "description": results.rows.item(j).description, "tags": results.rows.item(j).tags});
+                                }
+                            } else {
+                                prayers.push({"id": results.rows.item(j).id, "title": results.rows.item(j).title, "description": results.rows.item(j).description, "tags": results.rows.item(j).tags});
+                            }
                         }
                         inCallback(prayers);
                     }),
@@ -125,7 +148,6 @@ var tools = {
         var tmp = "";
         var tmpTags = [];
         var split = [];
-        var exp = null;
         try {
             var sql = "SELECT tags FROM prayers ORDER BY tags ASC";
             this.db.transaction(

@@ -12,25 +12,25 @@ enyo.kind({
         ]},
         {name: "scrollerLeft", kind: "Scroller", flex: 1, components: [
             {className: "add-container", kind: "RowGroup", components: [
-                {name: "monday", kind: "Input", hint: "", components: [
+                {name: "monday", kind: "Input", hint: "", onblur: "saveTags", components: [
                     {content: $L("Monday"), className: "text-label"}
                 ]},
-                {name: "thuesday", kind: "Input", hint: "", components: [
+                {name: "thuesday", kind: "Input", hint: "", onblur: "saveTags", components: [
                     {content: $L("Thuesday"), className: "text-label"}
                 ]},
-                {name: "wednesday", kind: "Input", hint: "", components: [
+                {name: "wednesday", kind: "Input", hint: "", onblur: "saveTags", components: [
                     {content: $L("wednesday"), className: "text-label"}
                 ]},
-                {name: "thursday", kind: "Input", hint: "", components: [
+                {name: "thursday", kind: "Input", hint: "", onblur: "saveTags", components: [
                     {content: $L("Thursday"), className: "text-label"}
                 ]},
-                {name: "friday", kind: "Input", hint: "", components: [
+                {name: "friday", kind: "Input", hint: "", onblur: "saveTags", components: [
                     {content: $L("Friday"), className: "text-label"}
                 ]},
-                {name: "saturday", kind: "Input", hint: "", components: [
+                {name: "saturday", kind: "Input", hint: "", onblur: "saveTags", components: [
                     {content: $L("Saturday"), className: "text-label"}
                 ]},
-                {name: "sunday", kind: "Input", hint: "", components: [
+                {name: "sunday", kind: "Input", hint: "", onblur: "saveTags", components: [
                     {content: $L("Sunday"), className: "text-label"}
                 ]}
             ]},
@@ -51,5 +51,35 @@ enyo.kind({
                 str += tags[i];
         }
         this.$.tags.setContent($L("Available Tags") + ": " + str);
+    },
+
+    setTags: function () {
+        enyo.log("Loading Tags...", enyo.application.prefs.tags);
+        if (enyo.application.prefs.tags) {
+            var tmp = enyo.json.parse(enyo.application.prefs.tags);
+            this.$.sunday.setValue(tmp[0]);
+            this.$.monday.setValue(tmp[1]);
+            this.$.thuesday.setValue(tmp[2]);
+            this.$.wednesday.setValue(tmp[3]);
+            this.$.thursday.setValue(tmp[4]);
+            this.$.friday.setValue(tmp[5]);
+            this.$.saturday.setValue(tmp[6]);
+        }
+            
+    },
+
+    saveTags: function (inSender, inEvent) {
+        var tmp = [
+            this.$.sunday.getValue(),
+            this.$.monday.getValue(),
+            this.$.thuesday.getValue(),
+            this.$.wednesday.getValue(),
+            this.$.thursday.getValue(),
+            this.$.friday.getValue(),
+            this.$.saturday.getValue()
+        ];
+
+        enyo.application.prefs.tags = enyo.json.stringify(tmp);
+        enyo.log("Saved Tags", enyo.application.prefs.tags);
     }
 });

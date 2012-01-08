@@ -9,12 +9,13 @@ enyo.kind({
     components: [
         {name: "header", kind: "Toolbar", components: [
             //{content: "PrayerZ"},
-            {kind: "RadioToolButtonGroup", value: 1, style: "width: 200px;", components: [
+            {kind: "RadioToolButtonGroup", value: 1, components: [
                 //{icon: "images/menu-icon-back.png", onclick: "goBack"},
                 //{icon: "images/menu-icon-forward.png", onclick: "goForward"}
-                {caption: "All", onclick: "showAll"},
-                {caption: "Grouped", onclick: "showDefault"}
+                {caption: "S", onclick: "showAll"},
+                {caption: "G", onclick: "showDefault"}
             ]},
+            {caption: $L("All"), toggling: true, onclick: "toggleAll"},
             {kind: "Spacer"},
             {icon: "images/menu-icon-new.png", onclick: "doAdd"}
         ]},
@@ -37,7 +38,8 @@ enyo.kind({
         allPrayers: [],
         prayers: [],
         combinePrayers: true,
-        rowIndex: null
+        rowIndex: null,
+        today: new Date().getDay()
     },
 
     handlePrayers: function (prayers) {
@@ -141,5 +143,13 @@ enyo.kind({
     handleDelete: function () {
         enyo.log("Deleted Prayer");
         tools.getPrayers(enyo.bind(this, this.handlePrayers));
+    },
+
+    toggleAll: function (inSender, inEvent) {
+        if (inSender.depressed) {
+            tools.getPrayers("all", enyo.bind(this, this.handlePrayers));
+        } else {
+            tools.getPrayers(this.today, enyo.bind(this, this.handlePrayers));
+        }
     }
 });
