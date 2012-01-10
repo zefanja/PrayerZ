@@ -29,3 +29,29 @@
     padding: 10px;
     font-size: smaller;
 }
+
+.hint {
+    font-size: smaller;
+    text-align: center;
+    padding: 10px;
+}
+
+.popup-title {
+    font-size: 1.2em;
+    text-align: center;
+}
+
+.popup-info {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    font-size: 0.8em;
+    text-align: center;   
+}
+
+.popup-version {
+    margin-top: .5em;
+    margin-bottom: 1em;
+    font-size: 0.7em;
+    text-align: center;
+    
+}

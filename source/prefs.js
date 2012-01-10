@@ -7,16 +7,19 @@ enyo.kind({
     components: [
         {kind: "Header", components: [
             //{kind: "Spacer"},
-            {name: "headerCaption", content: $L("Preferences"), flex: 1},
-            {kind: "Button", caption: $L("Back"), onclick: "doBack"}
+            {name: "btBack", kind: "Button", style: "margin-right: 20px;", caption: $L("Back"), onclick: "goBack"},
+            {name: "headerCaption", content: $L("Preferences"), flex: 1}
         ]},
         {name: "scrollerLeft", kind: "Scroller", flex: 1, components: [
-            {className: "add-container", kind: "RowGroup", components: [
+            {kind: "VFlexBox", className: "add-container", components: [
+                {name: "tags", content: "", allowHtml: true, className: "info"}
+            ]},
+            {className: "add-container", kind: "RowGroup", caption: $L("Tags"), style: "margin-left: auto; margin-right: auto;", components: [
                 {name: "monday", kind: "Input", hint: "", onblur: "saveTags", components: [
                     {content: $L("Monday"), className: "text-label"}
                 ]},
-                {name: "thuesday", kind: "Input", hint: "", onblur: "saveTags", components: [
-                    {content: $L("Thuesday"), className: "text-label"}
+                {name: "tuesday", kind: "Input", hint: "", onblur: "saveTags", components: [
+                    {content: $L("Tuesday"), className: "text-label"}
                 ]},
                 {name: "wednesday", kind: "Input", hint: "", onblur: "saveTags", components: [
                     {content: $L("wednesday"), className: "text-label"}
@@ -34,12 +37,20 @@ enyo.kind({
                     {content: $L("Sunday"), className: "text-label"}
                 ]}
             ]},
-            {kind: "VFlexBox", className: "add-container", components: [
-                {content: $L("Enter the tags, you want to pray for on a weekday!"), className: "info"},
-                {name: "tags", content: "", className: "info"}
+            {className: "add-container", kind: "RowGroup", defaultKind: "HFlexBox", caption: $L("General"), style: "margin-left: auto; margin-right: auto;", components: [
+                {align: "center", components: [
+                    {flex: 1, name: "linebreak", content: $L("Show answered prayers")},
+                    {name: "toggleAnswer", kind: "ToggleButton", state: false, onChange: "changeAnswer"}
+                ]}
             ]}
         ]}
     ],
+
+    create: function () {
+        this.inherited(arguments);
+        if (enyo.fetchDeviceInfo() && enyo.fetchDeviceInfo().keyboardAvailable)
+            this.$.btBack.hide();
+    },
 
     handleTags: function (tags) {
         enyo.log(tags);
@@ -50,7 +61,7 @@ enyo.kind({
             else
                 str += tags[i];
         }
-        this.$.tags.setContent($L("Available Tags") + ": " + str);
+        this.$.tags.setContent($L("Enter the tags, you want to pray for on a weekday!") + " " + $L("Available Tags") + ": <i>" + str + "</i>");
     },
 
     setTags: function () {
@@ -59,7 +70,7 @@ enyo.kind({
             var tmp = enyo.json.parse(enyo.application.prefs.tags);
             this.$.sunday.setValue(tmp[0]);
             this.$.monday.setValue(tmp[1]);
-            this.$.thuesday.setValue(tmp[2]);
+            this.$.tuesday.setValue(tmp[2]);
             this.$.wednesday.setValue(tmp[3]);
             this.$.thursday.setValue(tmp[4]);
             this.$.friday.setValue(tmp[5]);
@@ -68,11 +79,17 @@ enyo.kind({
             
     },
 
+    setShowAnswer: function () {
+        //enyo.log(enyo.application.prefs.answer);
+        if (enyo.application.prefs.answer)
+            this.$.toggleAnswer.setState(enyo.json.parse(enyo.application.prefs.answer));
+    },
+
     saveTags: function (inSender, inEvent) {
         var tmp = [
             this.$.sunday.getValue(),
             this.$.monday.getValue(),
-            this.$.thuesday.getValue(),
+            this.$.tuesday.getValue(),
             this.$.wednesday.getValue(),
             this.$.thursday.getValue(),
             this.$.friday.getValue(),
@@ -81,5 +98,14 @@ enyo.kind({
 
         enyo.application.prefs.tags = enyo.json.stringify(tmp);
         enyo.log("Saved Tags", enyo.application.prefs.tags);
+    },
+
+    changeAnswer: function (inSender, inState) {
+        enyo.application.prefs.answer = enyo.json.stringify(inState);
+    },
+
+    goBack: function (inSender, inEvent) {
+        this.saveTags();
+        this.doBack();
     }
 });

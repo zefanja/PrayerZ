@@ -9,22 +9,30 @@ enyo.kind({
     components: [
         {name: "header", kind: "Toolbar", components: [
             //{content: "PrayerZ"},
-            {kind: "RadioToolButtonGroup", value: 1, components: [
+            /*{kind: "RadioToolButtonGroup", value: 1, components: [
                 //{icon: "images/menu-icon-back.png", onclick: "goBack"},
                 //{icon: "images/menu-icon-forward.png", onclick: "goForward"}
-                {caption: "S", onclick: "showAll"},
-                {caption: "G", onclick: "showDefault"}
-            ]},
+                {icon: "images/down.png", onclick: "showAll"},
+                {icon: "images/right.png", onclick: "showDefault"}
+            ]}, */
+            {icon: "images/right.png", toggling: true, onclick: "showDefault"},
             {caption: $L("All"), toggling: true, onclick: "toggleAll"},
             {kind: "Spacer"},
             {icon: "images/menu-icon-new.png", onclick: "doAdd"}
         ]},
-        {name: "scrollerLeft", kind: "Scroller", flex: 1, components: [
+        {name: "scrollerMain", kind: "Scroller", flex: 1, components: [
             {name: "prayerList", kind: "VirtualRepeater", onSetupRow: "getPrayerListItem", components: [
-                {name: "itemPrayer", kind: "SwipeableItem", layoutKind: "VFlexLayout", tapHighlight: true, className: "list-item", components: [
-                    {name: "title", className: "prayer-title"},
-                    {name: "description", className: "prayer-description"},
-                    {name: "tags", className: "prayer-tags"}
+                {name: "itemPrayer", kind: "SwipeableItem", layoutKind: "HFlexLayout", tapHighlight: true, className: "list-item", components: [
+                    {kind: "VFlexBox", flex: 1, components: [
+                        {name: "title", className: "prayer-title"},
+                        {name: "description", className: "prayer-description"},
+                        {name: "tags", className: "prayer-tags"}
+                    ]},
+                    {kind: "VFlexBox", components: [
+                        {kind: "Spacer"},
+                        {name: "checkbox", kind: "CheckBox", onclick: "checkboxClicked"},
+                        {kind: "Spacer"}
+                    ]}
                 ],
                 onclick: "editPrayer",
                 onConfirm: "deletePrayer"
@@ -39,13 +47,18 @@ enyo.kind({
         prayers: [],
         combinePrayers: true,
         rowIndex: null,
-        today: new Date().getDay()
+        today: new Date().getDay(),
+        tappedCB: false,
+        day: new Date().getDay()
     },
 
     handlePrayers: function (prayers) {
-        enyo.log(prayers);
+        //enyo.log(prayers);
         var tmpTitle = {};
         var tmpTags = {};
+        var split = [];
+        var tmpStr = "";
+        var exp = null;
         this.allPrayers = prayers;
         this.prayers = [];
         
@@ -57,9 +70,18 @@ enyo.kind({
                 tmpTitle[this.allPrayers[i].title].push(this.allPrayers[i].description);
                 
                 //Tags
-                if (!tmpTags[this.allPrayers[i].title])
+                if (!tmpTags[this.allPrayers[i].title]) {
+                    tmpStr = "";
                     tmpTags[this.allPrayers[i].title] = [];
-                tmpTags[this.allPrayers[i].title].push(this.allPrayers[i].tags);
+                }
+                split = this.allPrayers[i].tags.split(",");
+                for (var k=0; k<split.length; k++) {
+                    exp = new RegExp("\\b" + split[k].replace(/^\s/, "") + "\\b");
+                    if (tmpStr.search(exp) === -1) {
+                        tmpStr += (tmpStr !== "") ? "," + split[k].replace(/^\s/, "") : split[k].replace(/^\s/, "");
+                        tmpTags[this.allPrayers[i].title].push(split[k].replace(/^\s/, ""));
+                    }
+                }
             }
             for (var j=0; j<this.allPrayers.length; j++) {
                 if (j !== 0 && this.allPrayers[j].title != this.allPrayers[j-1].title) {
@@ -70,7 +92,7 @@ enyo.kind({
             }
         } else {
             this.$.prayerHint.show();
-            this.$.prayerHint.setContent($L("No prayers there. Please add one!"));
+            this.$.prayerHint.setContent($L("No prayers"));
         }
         this.$.prayerList.render();
     },
@@ -86,6 +108,7 @@ enyo.kind({
             if (this.combinePrayers) {
                 this.$.itemPrayer.setSwipeable(false);
                 this.$.itemPrayer.setTapHighlight(false);
+                this.$.checkbox.hide();
                 for (var i=0; i<r.description.length; i++) {
                     descr += r.description[i];
                     if (i !== r.description.length -1)
@@ -95,11 +118,10 @@ enyo.kind({
                 
                 //Tags
                 for (var j=0; j<r.tags.length; j++) {
-                    if (j !== 0 && r.tags[j] != r.tags[j-1]) {
-                        if (r.tags[j] !== "")
+                    if (r.tags[j] !== "")
+                        if (j !== 0 && r.tags[j] != r.tags[j-1]) {
                             tmpTags += (tmpTags !== "") ? ", " + r.tags[j] : r.tags[j];
-                    } else if (j === 0) {
-                        if (r.tags[j] !== "")
+                        } else if (j === 0) {
                             tmpTags += r.tags[j];
                     }
                 }
@@ -107,6 +129,8 @@ enyo.kind({
             } else {
                 this.$.itemPrayer.setSwipeable(true);
                 this.$.itemPrayer.setTapHighlight(true);
+                this.$.checkbox.show();
+                this.$.checkbox.setChecked((r.answer === 1) ? true : false);
                 this.$.description.setContent(r.description);
                 this.$.tags.setContent(r.tags);
             }
@@ -121,19 +145,42 @@ enyo.kind({
 
     showAll: function (inSender, inEvent) {
         this.combinePrayers = false;
-        this.$.itemPrayer.setSwipeable(true);
         this.$.prayerList.render();
     },
 
     showDefault: function (inSender, inEvent) {
-        this.combinePrayers = true;
+        if (!inSender.depressed) {
+            this.$.scrollerMain.scrollIntoView(0,0);
+            this.combinePrayers = true;
+            inSender.setIcon("images/right.png");
+        } else {
+            this.combinePrayers = false;
+            inSender.setIcon("images/down.png");
+        }
+        
         this.$.prayerList.render();
+    },
+
+    checkboxClicked: function (inSender, inEvent) {
+        this.tappedCB = true;
+        //enyo.log(inEvent.rowIndex, inSender.getChecked());
+        if (inSender.getChecked())
+            tools.answerPrayer(1, this.allPrayers[inEvent.rowIndex].id, enyo.bind(this, this.handleAnswer));
+        else
+            tools.answerPrayer(0, this.allPrayers[inEvent.rowIndex].id, enyo.bind(this, this.handleAnswer));
+
+    },
+
+    handleAnswer: function () {
+        //enyo.log("Answered Prayer");
+        tools.getPrayers("all", enyo.application.prefs.answer, enyo.bind(this, this.handlePrayers));
     },
 
     editPrayer: function (inSender, inEvent) {
         this.rowIndex = inEvent.rowIndex;
-        if (!this.combinePrayers)
+        if (!this.combinePrayers && !this.tappedCB)
             this.doEdit();
+        this.tappedCB = false;
     },
 
     deletePrayer: function (inSender, inIndex) {
@@ -142,14 +189,12 @@ enyo.kind({
 
     handleDelete: function () {
         enyo.log("Deleted Prayer");
-        tools.getPrayers(enyo.bind(this, this.handlePrayers));
+        tools.getPrayers(this.today, enyo.application.prefs.answer, enyo.bind(this, this.handlePrayers));
     },
 
     toggleAll: function (inSender, inEvent) {
-        if (inSender.depressed) {
-            tools.getPrayers("all", enyo.bind(this, this.handlePrayers));
-        } else {
-            tools.getPrayers(this.today, enyo.bind(this, this.handlePrayers));
-        }
+        this.$.scrollerMain.scrollIntoView(0,0);
+        this.day = (inSender.depressed) ? "all" : this.today;
+        tools.getPrayers(this.day, enyo.application.prefs.answer, enyo.bind(this, this.handlePrayers));
     }
 });
