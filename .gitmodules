@@ -7,3 +7,6 @@
 [submodule "lib/layout"]
 	path = lib/layout
 	url = ../../enyojs/layout.git
+[submodule "lib/indexeddb"]
+	path = lib/indexeddb
+	url = https://github.com/vtomilin/EnyoIndexedDBSource.git
