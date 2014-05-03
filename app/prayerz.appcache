@@ -1,12 +1,17 @@
 CACHE MANIFEST
-# v1 - 2014-05-03
+# v2 - 2014-05-03
 CACHE:
 icon.png
 index.html
 assets/add.png
 assets/facebook_32.png
 assets/favicon.ico
+assets/prayerz32.png
+assets/prayerz60.png
+assets/prayerz90.png
 assets/prayerz128.png
+assets/prayerz256.png
+assets/prayerz512.png
 assets/toolbar-icon-delete.png
 assets/twitter_32.png
 build/app.css
