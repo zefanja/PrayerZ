@@ -1,0 +1,20 @@
+{
+    "name": "PrayerZ",
+    "version": "0.7",
+    "description": "PrayerZ helps you to organize your prayer requests. Enter your different prayers and PrayerZ will sort & combine it for you (based on tags). You can also add notes to a prayer. <b>Features:</b> <ul><li>Organize your prayers based on tags</li><li>Add notes to a prayer</li><li>Prayers with the same title are automatically combined</li><li>Select the prayers you want to pray for on a weekday</li><li>easy-to-use interface</li></ul> If you have any questions or requests, send us an eMail to <a href:mailto:info@zefanjas.de>info@zefanjas.de</a>!",
+    "launch_path": "/prayerz-ng/app/index.html",
+    "icons": {
+        "32": "/biblez-ng/app/assets/biblez32.png",
+        "60": "/biblez-ng/app/assets/biblez60.png",
+        "90": "/biblez-ng/app/assets/biblez90.png",
+        "128": "/biblez-ng/app/assets/biblez128.png",
+        "256": "/biblez-ng/app/assets/biblez256.png",
+        "512": "/biblez-ng/app/assets/biblez512.png"
+    },
+    "developer": {
+        "name": "zefanjas",
+        "url": "http://zefanjas.de"
+    },
+    "default_locale": "en",
+    "appcache_path": "/prayerz-ng/app/prayerz.appcache"
+}
