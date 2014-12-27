@@ -1,8 +1,7 @@
 'use strict';
 
-var React = require('react');
-window.React = React;
+window.React = require('react');
 
-var MyComponent = require('./components/mycomponent.jsx');
+var Main = require('./components/main.jsx');
 
-React.render(<MyComponent />, document.getElementById('content'));
+React.render(<Main />, document.body);
