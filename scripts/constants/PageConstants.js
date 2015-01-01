@@ -12,6 +12,6 @@
 var keyMirror = require('keymirror');
 
 module.exports = keyMirror({
-  PAGE_VISIBLE: null, //show or hide a page
+  PAGE_SWITCH: null, //show or hide a page
   PAGE_ACTIVE: null //get active page
 });

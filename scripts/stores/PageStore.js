@@ -23,14 +23,14 @@ var _pages = {
   "about": {visible:false, id: "about"}
 };
 
-/**
- * Update a TODO item.
- * @param  {string} id
- * @param {object} updates An object literal containing only the data to be
- *     updated.
- */
-function update(id, updates) {
-  _pages[id] = assign({}, _pages[id], updates);
+function update(inId) {
+  for (var id in _pages) {
+    if(id === inId) {
+      _pages[id].visible = true;
+    } else {
+      _pages[id].visible = false;
+    }
+  }
 }
 
 var PageStore = assign({}, EventEmitter.prototype, {
@@ -73,11 +73,11 @@ var PageStore = assign({}, EventEmitter.prototype, {
 // Register to handle all updates
 AppDispatcher.register(function(payload) {
   var action = payload.action;
-  var text;
 
   switch(action.actionType) {
-    case PageConstants.PAGE_VISIBLE:
-      update(action.id, {visible: action.visible});
+    case PageConstants.PAGE_SWITCH:
+      update(action.id);
+      PageStore.emitChange();
       break;
     case PageConstants.PAGE_ACTIVE:
       getActive();
@@ -90,7 +90,7 @@ AppDispatcher.register(function(payload) {
   // needs to trigger a UI change after every view action, so we can make the
   // code less repetitive by putting it here.  We need the default case,
   // however, to make sure this only gets called after one of the cases above.
-  TodoStore.emitChange();
+  //PageStore.emitChange();
 
   return true; // No errors.  Needed by promise in Dispatcher.
 });
