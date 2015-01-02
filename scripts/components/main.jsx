@@ -5,22 +5,16 @@ var PrayerList = require("./prayerList.jsx");
 var AddPrayer = require("./add.jsx");
 var Footer = require("./footer.jsx");
 var PageStore = require('../stores/PageStore');
+var PrayerStore = require('../stores/PrayerStore');
+var PageActions = require('../actions/PageActions');
 var React = require('react'),
 
     Main = React.createClass({
       getInitialState: function () {
         return {
-          prayers: [
-            {title: "Franz", tags: "freunde", notes: "Probleme im Studium. Hilfe beim Lernen"},
-            {title: "Klaus", tags: "freunde", notes: "Probleme im Studium. Hilfe beim Lernen"},
-            {title: "Max", tags: "freunde", notes: "Probleme im Studium. Hilfe beim Lernen"},
-            {title: "Erika", tags: "freunde", notes: "Probleme im Studium. Hilfe beim Lernen"},
-            {title: "Haus", tags: "finanzen", notes: "Probleme im Studium. Hilfe beim Lernen"},
-            {title: "Auto", tags: "finanzen", notes: "Probleme im Studium. Hilfe beim Lernen"},
-            {title: "Luise", tags: "familie", notes: "Probleme im Studium. Hilfe beim Lernen"},
-            {title: "Horst", tags: "familie", notes: "Probleme im Studium. Hilfe beim Lernen"}
-          ],
-          activePage: PageStore.getActive()
+          prayers: PrayerStore.getAll(),
+          activePage: PageStore.getActive(),
+          editMode: false
         };
       },
 
@@ -32,32 +26,40 @@ var React = require('react'),
         PageStore.removeChangeListener(this._onChange);
       },
 
+      handleEditMode: function () {
+        this.setState({editMode: true});
+        PageActions.setPage("edit");
+      },
+
       render: function() {
         var page;
-        //console.log(this.state.activePage);
         switch(this.state.activePage.id) {
           case "main":
-            page = <PrayerList data={this.state.prayers}/>
+          case "edit":
+            page = <PrayerList editMode={this.state.editMode} data={this.state.prayers}/>
             break;
           case "add":
             page = <AddPrayer />
             break;
         }
 
-        //<AddPrayer />
-
         return (
           <section className="vbox fit scroll">
             <Header page={this.state.activePage}/>
             {page}
-            <Footer />
+            <Footer onEditMode={this.handleEditMode} editMode={this.state.editMode}/>
           </section>
 
         );
       },
 
       _onChange: function() {
-        this.setState({activePage: PageStore.getActive()});
+        var active = PageStore.getActive();
+        if(active.id === "main") {
+          this.setState({editMode: false, activePage: active});
+        } else {
+          this.setState({activePage: active});
+        }
       }
     });
 
