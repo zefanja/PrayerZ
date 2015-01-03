@@ -1,0 +1,19 @@
+{
+    "launch_path": "/index.html",
+    "installs_allowed_from": [
+        "*"
+    ],
+    "version": "0.0.1",
+    "name": "PrayerZ",
+    "description": "Organize your prayer requests",
+    "developer": {
+        "name": "zefanjas",
+        "url": "http://zefanjas.de/"
+    },
+    "icons": {
+        "60": "/dist/images/prayerz60.png",
+        "128": "/dist/images/prayerz128.png",
+        "256": "/dist/images/prayerz256.png",
+        "512": "/dist/images/prayerz512.png"
+    }
+}
