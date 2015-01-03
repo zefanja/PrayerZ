@@ -14,6 +14,14 @@ var PageActions = {
     AppDispatcher.handleViewAction({
       actionType: PageConstants.PAGE_ACTIVE
     });
+  },
+
+  updateSettings: function(id, updates) {
+    AppDispatcher.handleViewAction({
+      actionType: PageConstants.PAGE_UPDATE_SETTINGS,
+      id: id,
+      updates: updates
+    });
   }
 };
 

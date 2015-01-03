@@ -6,7 +6,7 @@ var assign = require('object-assign');
 
 var CHANGE_EVENT = 'change';
 
-var _prayers = JSON.parse(localStorage.getItem("prayers")); // collection of Prayer items
+var _prayers = JSON.parse(localStorage.getItem("prayers")) || {}; // collection of Prayer items
 
 /**
  * Create a Prayer item.
@@ -51,8 +51,10 @@ function updateAll(updates) {
  * Delete a Prayer item.
  * @param  {string} id
  */
-function destroy(id) {
-  delete _prayers[id];
+function destroy(ids) {
+  ids.forEach(function (id) {
+    delete _prayers[id];
+  });
 }
 
 /**
@@ -91,6 +93,20 @@ var PrayerStore = assign({}, EventEmitter.prototype, {
    */
   getAll: function() {
     return _prayers;
+  },
+
+  getByTagId: function (inIds) {
+    var prayers = {};
+    if(inIds) {
+      for (var id in _prayers) {
+        for (var i=0;i<inIds.length;i++) {
+          if(_prayers[id].tags.indexOf(inIds[i]) !== -1) {
+            prayers[id] = _prayers[id];
+          }
+        }
+      }
+    }
+    return prayers;
   },
 
   emitChange: function() {
@@ -155,7 +171,7 @@ AppDispatcher.register(function(payload) {
       break;
 
     case PrayerConstants.PRAYER_DESTROY:
-      destroy(action.id);
+      destroy(action.ids);
       break;
 
     case PrayerConstants.PRAYER_DESTROY_COMPLETED:

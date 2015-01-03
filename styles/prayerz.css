@@ -29,16 +29,36 @@ section[role="region"] {
   font-size: 0.8em;
 }
 
+.light-font {
+  color: #777;
+}
+
+.italic {
+  font-style: italic;
+}
+
 .nice-padding {
   padding: 10px;
+}
+
+.nice-tb-padding {
+  padding: 10px 0px;
 }
 
 .show {
   display: block;
 }
 
+section[role="region"] > header:first-child a,
+section[role="region"] > header:first-child button,
+.white {
+  color: #fff;
+}
+
+
 section[role="region"] > header:first-child a.hide,
 section[role="region"] > header:first-child button.hide,
+[role="toolbar"] .hide,
 .hide {
   display: none;
 }
@@ -47,4 +67,9 @@ section[role="region"] > header:first-child button.hide,
 [data-type="list"] li {
 	height: auto;
 	padding: 5px 5px;
+}
+
+/* BUTTONS */
+.prayerz-button {
+  max-width: 250px;
 }

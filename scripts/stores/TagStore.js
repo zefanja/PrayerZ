@@ -6,7 +6,7 @@ var assign = require('object-assign');
 
 var CHANGE_EVENT = 'change';
 
-var _tags = JSON.parse(localStorage.getItem("tags"));
+var _tags = JSON.parse(localStorage.getItem("tags")) || {};
 var _lastIds = [];
 
 /**
@@ -96,12 +96,38 @@ var TagStore = assign({}, EventEmitter.prototype, {
     return _tags;
   },
 
+  getAllTagText: function () {
+    var tagNames = "";
+      for (var i in _tags) {
+        tagNames += (tagNames === "") ? _tags[i].text : ", " + _tags[i].text;
+      }
+    return tagNames;
+  },
+
   getTagText: function (inTags) {
     var tagNames = "";
-    inTags.forEach(function (i) {
-      tagNames += (tagNames === "") ? _tags[i].text : ", " + _tags[i].text;
-    });
+    if(inTags) {
+      inTags.forEach(function (i) {
+        tagNames += (tagNames === "") ? _tags[i].text : ", " + _tags[i].text;
+      });
+    }
     return tagNames;
+  },
+
+  getTagIds: function (inText) {
+    var tags;
+    var result = [];
+    if (inText && inText !== '') {
+      tags = inText.split(",");
+      tags.forEach(function (t) {
+        for (var key in _tags) {
+          if (_tags[key].text === t.trim().toLowerCase()) {
+            result.push(key);
+          }
+        }
+      });
+    }
+    return result;
   },
 
   getLastIds: function () {
@@ -143,7 +169,7 @@ TagStore.dispatchToken = AppDispatcher.register(function(payload) {
       if (text !== '') {
         tags = text.split(",");
         tags.forEach(function (t) {
-          id = create(t.trim());
+          id = create(t.trim().toLowerCase());
           if(id) {
             _lastIds.push(id);
           }
@@ -152,7 +178,7 @@ TagStore.dispatchToken = AppDispatcher.register(function(payload) {
       break;
     case TagConstants.TAG_UPDATE_TEXT:
       text = action.text.trim();
-      if (text !== '') {
+      if (inText && inText !== '') {
         update(action.id, {text: text});
       }
       break;

@@ -10,9 +10,9 @@ var React = require('react'),
       render: function() {
         return (
           <section className="fit scroll center nice-padding">
-            <div className="nice-padding"><img src="../dist/images/icon-128.png" /></div>
-            &copy; 2010-2015 by <a href='http://zefanjas.de' target='_blank'>zefanjas.de</a>
-            <p><a href='https://github.com/zefanja/losungen' target='_blank'>Source code on GitHub</a></p>
+            <div className="nice-padding"><img src="../dist/images/prayerz128.png" /></div>
+            &copy; 2015 by <a href='http://zefanjas.de' target='_blank'>zefanjas.de</a>
+            <p><a href='https://github.com/zefanja/prayerz' target='_blank'>Source code on GitHub</a></p>
           </section>
         );
       }

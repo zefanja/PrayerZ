@@ -4,6 +4,7 @@ var PageConstants = require('../constants/PageConstants');
 var assign = require('object-assign');
 
 var CHANGE_EVENT = 'change';
+var SETTINGS_EVENT = 'settings';
 
 var _pages = {
   "main": {visible:true, id: "main"},
@@ -13,6 +14,8 @@ var _pages = {
   "edit": {visible: false, id: "edit"}
 };
 
+var _settings = JSON.parse(localStorage.getItem("settings")) || {};
+
 function update(inId) {
   for (var id in _pages) {
     if(id === inId) {
@@ -21,6 +24,14 @@ function update(inId) {
       _pages[id].visible = false;
     }
   }
+}
+
+function updateSettings(id, updates) {
+  _settings[id] = assign({}, _settings[id], updates);
+}
+
+function save () {
+  localStorage.setItem("settings", JSON.stringify(_settings));
 }
 
 var PageStore = assign({}, EventEmitter.prototype, {
@@ -33,6 +44,10 @@ var PageStore = assign({}, EventEmitter.prototype, {
     return _pages;
   },
 
+  getSettings: function () {
+    return _settings;
+  },
+
   getActive: function() {
     for (var id in _pages) {
       if(_pages[id].visible) {
@@ -41,22 +56,33 @@ var PageStore = assign({}, EventEmitter.prototype, {
     }
   },
 
+  getDaysOfWeekTags: function () {
+    return _settings.daysOfWeek;
+  },
+
   emitChange: function() {
     this.emit(CHANGE_EVENT);
   },
 
-  /**
-   * @param {function} callback
-   */
   addChangeListener: function(callback) {
     this.on(CHANGE_EVENT, callback);
   },
 
-  /**
-   * @param {function} callback
-   */
   removeChangeListener: function(callback) {
     this.removeListener(CHANGE_EVENT, callback);
+  },
+
+  emitSettings: function() {
+    this.emit(SETTINGS_EVENT);
+    save();
+  },
+
+  addSettingsListener: function(callback) {
+    this.on(SETTINGS_EVENT, callback);
+  },
+
+  removeSettingsListener: function(callback) {
+    this.removeListener(SETTINGS_EVENT, callback);
   }
 });
 
@@ -68,6 +94,10 @@ AppDispatcher.register(function(payload) {
     case PageConstants.PAGE_SWITCH:
       update(action.id);
       PageStore.emitChange();
+      break;
+    case PageConstants.PAGE_UPDATE_SETTINGS:
+      updateSettings(action.id, action.updates);
+      PageStore.emitSettings();
       break;
     case PageConstants.PAGE_ACTIVE:
       getActive();

@@ -12,10 +12,10 @@ var PrayerActions = {
 		});
 	},
 
-	destroy: function(id) {
+	destroy: function(ids) {
 		AppDispatcher.handleViewAction({
 			actionType: PrayerConstants.PRAYER_DESTROY,
-			id: id
+			ids: ids
 		});
 	},
 };

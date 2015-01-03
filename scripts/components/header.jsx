@@ -34,6 +34,9 @@ var React = require('react'),
           case "edit":
             this.setState({title: "Edit", back: false, add: false, cancel: true, done: false, right: true});
             break;
+          case "settings":
+            this.setState({title: "Settings", back: true, add: false, cancel: false, done: false, right: true});
+            break;
         }
       },
 
@@ -42,11 +45,18 @@ var React = require('react'),
       },
 
       _handleCancel: function () {
+        if(this.props.page.id === "settings") {
+          uiEvents.updateSettings();
+        }
         PageActions.setPage("main");
       },
 
       _handleDone: function () {
         uiEvents.done();
+      },
+
+      _handleSettings: function () {
+        PageActions.setPage("settings");
       },
 
       render: function() {
@@ -55,9 +65,11 @@ var React = require('react'),
             <section role="region">
               <header>
                 <a className={(this.state.add) ? "" : "hide"}></a>
-                <a href="#" className={(this.state.back) ? "" : "hide"}><span className="icon icon-back">back</span></a>
+                <a className={(this.state.add) ? "" : "hide"}></a>
+                <a href="#" className={(this.state.back) ? "" : "hide"} onClick={this._handleCancel}><span className="icon icon-back">back</span></a>
                 <a href="#" className={(this.state.cancel) ? "" : "hide"} onClick={this._handleCancel}><span className="icon icon-close">close</span></a>
                 <menu type="toolbar">
+                  <button data-icon="settings" className={(this.state.add) ? "white" : "hide white"} onClick={this._handleSettings}></button>
                   <button className={(this.state.add) ? "" : "hide"} onClick={this._handleAdd}><span className="icon icon-add">add</span></button>
                   <button className={(this.state.done) ? "" : "hide"} onClick={this._handleDone}>done</button>
                   <a className={(this.state.right) ? "" : "hide"}></a>

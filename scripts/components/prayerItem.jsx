@@ -1,5 +1,5 @@
 'use strict';
-
+var TagStore = require('../stores/TagStore');
 var React = require('react'),
 
     PrayerItem = React.createClass({
@@ -17,7 +17,7 @@ var React = require('react'),
             </label>
             <div>{prayer.title}</div>
             <div className="small">{prayer.text}</div>
-            <div className="small">tags: {prayer.tags}</div>
+            <div className="small light-font italic">{TagStore.getTagText(prayer.tags)}</div>
           </li>
         );
       }
